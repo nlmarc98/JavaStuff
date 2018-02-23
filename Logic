@@ -1,0 +1,79 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ooassignement3;	
+
+import java.util.Arrays;
+
+/**
+ *
+ * @author Marc-William Verwoert s4718801 and Madelief Rennspies s4703103
+ */
+public class Logic {
+
+    private final Geometricable[] shapes;
+    private final int shapesLength = 10;
+
+    public Logic() {
+        this.shapes = new Geometricable[shapesLength];
+    }
+
+    public void addCircle(double x, double y, double r) {
+        Circle circle = new Circle(x, y, r);
+        addShape(circle);
+    }
+
+    public void addRectangle(double x, double y, double h, double w) {
+        Rectangle rectangle = new Rectangle(x, y, h, w);
+        addShape(rectangle);
+    }
+
+    private void addShape(Geometricable shape) {
+        int index = 0;
+        while (shapes[index] != null) {
+            index++;
+        }
+        if (index >= shapesLength) {
+            throw new IllegalArgumentException("Array is full");
+        } else {
+            shapes[index] = shape;
+        }
+    }
+
+    public void showList() {
+        System.out.println(Arrays.toString(shapes));
+    }
+
+    public void move(int i, double dx, double dy) {
+        Geometricable shape = shapes[i];
+        shape.moveObject(dx, dy);
+    }
+
+    public void remove(int index) {
+        for (int i = index; i < shapes.length-1; i++) {
+            shapes[i]= shapes[i+1];
+        }
+          shapes[shapes.length - 1] = null;
+    }
+
+    public void sort(String type) {
+        switch (type) {
+            case " x":
+                LeftRightComparator lrc = new LeftRightComparator();
+                Arrays.sort(shapes, lrc);
+                break;
+            case " y":
+                LowHighComparator lhc = new LowHighComparator();
+                Arrays.sort(shapes, lhc);
+                break;
+            default:
+                System.out.println("invalid sorting argument");
+        }
+    }
+
+    public void sort() {
+        Arrays.sort(shapes);
+    }
+}
