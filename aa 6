@@ -1,0 +1,243 @@
+Require Import BenB.
+
+(* Domains *)
+Definition T := R.
+  (* Meaning: Time in minutes in real numbers. *)
+Variable C : Set.
+  (* Meaning: The set of cars. *)
+Definition M := R.
+  (* Meaning: The set of amounts of money in euros. *)
+
+
+
+
+
+
+
+
+
+
+
+
+
+(* Predicates*)
+Variable carProvided (* t c *): T -> C -> Prop.
+  (* Car c is in the entrance platform at time t. *)
+  (* Look if the car is there at that moment. *)
+Variable carDelivered (* t c *): T -> C -> Prop.
+  (* Car c is on the delivery platform at time t. *)
+  (* Look if the car is there at that moment. *)
+Variable cardDispensed (* t c *): T -> C -> Prop.
+  (* The card for car c is dispensed at time t. *)
+  (* Look if there is a card in the tray at that moment. *)
+Variable moneyPaid (* t m *): T -> M -> Prop.
+  (* Amount of money m has been put in the payment terminal at time t. *)
+  (* Look at the display at that moment. *)
+Variable inStorage (* t c *): T -> C -> Prop.
+  (* Car c is in the storage at time t. *)
+  (* Search the storage at that moment. *)
+Variable carStoredMessage (* t c *): T -> C -> Prop.
+  (* The message that car c is in the storage at time t. *)
+  (* Measure the voltage of the connecting cable at that time. *)
+Variable isPaidMessage (* t c *): T -> C -> Prop.
+  (* The message that there was a payment for car c at time t. *)
+  (* Measure the voltage of the connecting cable at that moment. *)
+Variable fromStorage (* t c *): T -> C -> Prop.
+  (* Car c is going to the delivery platform at time t. *)
+  (* Listen if you can hear the machine working at that moment. *)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(* Functions *)
+(* We did not really discuss this at the lecture, but somehow we need to be
+   able to convert time into money, because it is necessary to determine
+   the amount of money that is due for a period of time. 
+
+   We do this by using a function. We have two possibilities:
+
+   1. an abstract function via Variable:
+
+      Variable timeIsMoney : T -> M.
+
+      In this case we only fix some kind of oracle that, given a (duration of) time,
+	  computes an amount of money without saying how that happens exactly.
+
+   2. a concrete function via Definition:
+
+      Definition timeIsMoney (d:T) := d.
+
+      In this case we fix (like it says in the specification) that
+      one pays d euros for d minutes of parking.
+
+   The second way secretly uses the fact that Coq cannot distinguish
+   the sets T and M, since they are both copies of the real numbers.
+
+   Because that is not very hygienic, we choose the first way.
+*)
+
+Variable timeIsMoney: T -> M.
+
+
+
+
+
+
+
+
+
+
+
+
+
+(* Specifications of the components *)
+
+(* 
+  If at time t car c is on the entrance platform,
+  then 1 minute later that car is in the storage
+  and 1 minute later a message is sent that that
+  car has been stored.
+*)
+
+Definition Storer :=
+(*! term *)
+(*
+forall t:T,
+  forall c:C,
+      carProvided t c
+    ->
+        inStorage (t+1) c
+      /\
+        carStoredMessage (t+2) c
+*)
+.
+
+(*
+  If at time t a message is sent that car c has been stored,
+  a card is immediately dispensed for car c.
+*)
+Definition CardDispenser :=
+(*! term *)
+(*
+forall t:T,
+  forall c:C,
+      carStoredMessage t c
+    ->
+      cardDispensed t c
+*)
+.
+
+(*
+  If car c is in the storage at time t,
+  then it holds one minute later that either
+    there was no payment for car c yet and car c
+    is still in the storage,
+  or
+    there was a payment for car c and car c then goes
+    to the delivery platform.
+*)
+Definition Storage :=
+(*! term *)
+(*
+forall t:T,
+  forall c:C,
+      inStorage t c
+    ->
+        (~isPaidMessage (t+1) c  /\ -> inStorage (t+1) c)
+      \/
+        (isPaidMessage (t+1) c  /\ -> fromStorage (t+1) c)
+*)
+.
+
+
+
+
+(* The specifications of the following components were not discussed
+   in the lecture, so you have to determine them yourself.
+*)
+
+(*
+  If at time t a card was dispensed for car c and
+  at time t+d an amount of money equal to d euros
+  was paid, then there is a message at time t+d that
+  there was a payment for car c.
+*)
+
+Definition PaymentTerminal :=
+(*! term *)
+
+
+(* You probably need the function timeIsMoney to convert a (period of) time
+   to an amount of money. We used an abstract function here.
+   Look at the explanation above.
+*)
+.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(*
+  If there was a message at time t that there was a payment for 
+  car c and car c is going to the delivery platform at the same moment,
+  then car c is on the delivery platform one minute later.
+*)
+
+Definition DeliveryPlatform :=
+(*! term *)
+.
+
+
+
+(* Specification of the overall system *)
+
+(* We did not discuss the specification of the overall system either,
+   but here is a suggestion.
+*)
+
+(*
+  If an arbitrary car is at some time on the entrance platform
+  and some time later the required amount of money was paid,
+  then the car is on the delivery platform one more minute later.
+*)
+
+Definition AutomatedParkingSolution :=
+(*! term *)
+.
+
+
+(* Correctness theorem *)
+
+(* Because we cannot prove the correctness theorem we surrounded
+   it with comment markers. Otherwise the verifier will complain
+   about 'pending proofs' which will result in a red cross.
+
+   Fill in the missing parts, but do not remove these comment markers!
+
+Theorem CorTheorem:
+
+->
+
+.
+*)
