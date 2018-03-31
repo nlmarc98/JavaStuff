@@ -1,0 +1,332 @@
+Require Import BenB.
+
+(* Correctness theorem in propositional logic. *)
+
+(* Domain model of the original wiring page. *)
+   
+
+(* Device: CD player. *)
+(* Author: Hanno Wupper. *)
+Variable cdpl_power : Prop.
+  (* There is 230 volt on the plug of the CD player. *)
+Variable cdpl_cd : Prop.
+  (* An audio CD is playing in the CD player. *)
+Variable cdpl_lol : Prop.
+  (* There is an analogue sound signal L on the left line port
+     of the CD player. *)
+Variable cdpl_lor : Prop.
+  (* There is an analogue sound signal R on the right line port
+     of the CD player. *)
+Variable cdpl_on : Prop.
+  (* The on-off-button of the CD player is set to 'on'. *)
+
+Definition cdplayer :=
+      cdpl_power
+    /\
+      cdpl_cd
+    /\
+      cdpl_on
+  ->
+      cdpl_lol
+    /\
+      cdpl_lor
+.
+  (* If there is 230 volt on the plug of the CD player,
+     an audio CD is playing in the CD player and
+     the on-off-button is set to 'on' then there are
+     analogue sound signals on the left line port of the
+     CD player and on the right line port of the CD player.
+  *)
+ 
+ 
+(* Device: left speaker. *)
+(* Author: Hanno Wupper. *)
+Variable speakerl_in_l : Prop.
+  (* There is an amplified analogue mono sound signal L
+     on the left speaker. *)
+Variable mono_l : Prop.
+  (* Mono sound L is in the room. *)
+
+Definition boxl :=
+    speakerl_in_l
+  ->
+    mono_l
+.
+  (* If there is an amplified analogue mono sound signal L
+     on the left speaker, then there is mono sound L in the room.
+  *)
+
+
+(* Device: amplifier. *)
+(* Author: Paul van Poecke. *)
+Variable amp_linel : Prop.
+  (* There is an analogue sound signal L on the left line input
+     port of the amplifier. *)
+Variable amp_liner : Prop.
+  (* There is an analogue sound signal R on the right line input
+     port of the amplifier. *)
+Variable amp_power : Prop.
+  (* There is 230 volt on the plug of the amplifier. *)
+Variable amp_sol : Prop.
+  (* There is an amplified analogue sound signal L on the left
+     speaker port of the amplifier. *)
+Variable amp_sor : Prop.
+  (* There is an amplified analogue sound signal R on the right
+     speaker port of the amplifier. *)
+Variable amp_on : Prop.
+  (* The on-off-button of the amplifier is set to 'on'. *)
+
+Definition amplifier :=
+    amp_power
+  /\
+    amp_linel
+  /\
+    amp_liner
+  /\
+    amp_on
+->
+  
+  (* If there is 230 V on the plug of this amplifier,
+     the on-off-button is set to 'on' and a sound signal
+     is on the left line input port as well as on the right line
+     input port, then there is an amplified analogue sound signal
+     L on the left speaker port and an amplified analogue sound
+     signal R on the right speaker port.
+  *)
+
+
+(* Device: power strip. *)
+(* Author: Sebastiaan Versteeg. *)
+Variable ps_power : Prop.
+  (* There is 220/230 volt on the plug of the power strip. *)
+Variable ps_out1 : Prop.
+  (* There is 220/230 volt on port 1 of the power strip to
+     which other devices can be connected so that the connected device
+     will also get 220/230 volt.
+  *)
+Variable ps_out2 : Prop.
+  (* There is 220/230 volt on port 2 of the power strip to
+     which other devices can be connected so that the connected device
+     will also get 220/230 volt.
+  *)
+Variable ps_out3 : Prop.
+  (* There is 220/230 volt on port 3 of the power strip to
+     which other devices can be connected so that the connected device
+     will also get 220/230 volt.
+  *)
+
+Definition powerstrip :=
+    ps_power
+  ->
+      ps_out1
+    /\
+      ps_out2
+    /\
+      ps_out3
+.
+  (* If the power strip is supplied with power,
+     then the devices that are connected to it
+     are also supplied with power. *)
+ 
+    
+(* Device: kettle. *)
+(* Authors: Michel Kok and Bram in 't Zandt. *)
+Variable ke_power : Prop.
+  (* There is 230 volt on the plug of the kettle. *)
+Variable ke_button : Prop.
+  (* The button on the kettle is pressed. *)
+Variable ke_heating_up : Prop.
+  (* The water in the kettle is being heated up. *)
+Variable ke_temperature : Prop.
+  (* The water in the kettle has the desired temperature. *)
+
+Definition kettle :=
+      ke_power
+    /\
+      ke_button
+  ->
+      ke_heating_up
+    <->
+      ~ ke_temperature
+.
+  (* If this kettle is supplied with 230 volt and the button is
+     pressed then the water is being heated.
+   *)
+
+
+(* Device: motion sensor. *)
+(* Author: Thomas Churchman. *)
+Variable ms_power_in : Prop.
+  (* Voltage in the input plug of the motion sensor. *)
+Variable ms_power_out : Prop.
+  (* Voltage on the output plug of the motion sensor. *)
+Variable ms_detection : Prop.
+  (* Movement was detected in the past two minutes. *)
+
+Definition motionsensor :=
+      ms_power_in
+    /\
+      ms_detection
+  <->
+    ms_power_out
+.
+  (* There is a voltage on the out port of the motion sensor
+     if and only if there is voltage on the in port of the
+     motion sensor and movement was detected in the past two minutes.
+  *)
+  
+
+(* End of the original domain model. *)
+
+(* 
+   Replace the placeholders below with the new propositions that you need
+   for your installation.
+   Separate your propositions with whitespace.
+*)
+
+(* 
+   This time you have to add all propositions separated by whitespace at once. 
+   Note that it says 'Variables' instead of 'Variable'.
+*)
+Variables (*! term *) power_plug analogue_sounds cd_connection: Prop.
+
+
+(* When the power strip is supplied with power, the amplifier device that is connected to it via the plug is also supplied with power. 
+ *)
+
+ (* analogue sounds: There are send analogue sounds to amplifier. *)
+
+ (* cd_connection : There is a wireless connection between the amplifier and the cd_player *)
+
+
+(*
+   Replace the placeholders below with the specifications of the devices that
+   you use in your installation.
+   
+   If you use fewer parts than we proposed, replace the remaining placeholders
+   with dummies, like
+   'Definition ap1 := True.'
+*)
+
+Definition (*! term *) lo := cdpl_lol <-> amp_sol.
+    
+Definition (*! term *)or:=  cdpl_lor  <-> amp_sor.
+
+Definition (*! term *)ap3 := True .
+
+Definition (*! term *)ap4 := True .
+
+Definition (*! term *)ap5 := True .
+
+Definition (*! term *)ap6 := True .
+
+(*
+   Give the desired property of your complete installation.
+   Also think of a fitting name for your complete installation.
+*)
+
+Definition (*! term *) music_amplifier:=
+cdpl_power
+/\
+cdpl_cd
+/\
+cdpl_on 
+/\
+amp_power
+/\
+amp_linel
+/\
+amp_liner
+/\
+amp_on
+/\ 
+ps_power
+/\
+power_plug
+/\
+analogue_sounds
+/\
+cd_connection
+ ->
+amp_sol
+ /\
+amp_sor
+
+.
+
+
+
+
+(*
+   It is not unlikely that you cannot properly connect the devices
+   that you chose on a mathematical level.
+   To solve that problem you can define special connectors here.
+   Think of cables, adapters, converters etc.
+
+   Each of those connectors has its own name and its own specification.
+   
+   If you do not need any connectors, then you have to replace them with
+   dummies again, like
+   'Definition kop1 := True.'
+*)   
+
+Definition (*! term *) kop1 := True.
+
+Definition (*! term *)kop2 := True .
+
+Definition (*! term *)kop3 := True .
+
+Definition (*! term *) kop4 := True.
+
+Definition (*! term *) kop5 := True.
+
+Definition (*! term *) kop6 := True.
+
+(*
+   Below here you have to give the correctness theorem of your installation.
+   that is a theorem specifying that if you connected the correct devices
+   (possibly with connectors) then the 'desired property' holds.
+
+   Use the names that you filled in after the Definitions.
+*)
+
+Theorem myInstallationWorks :
+   cdplayer  /\  amplifier  /\ powerstrip ->  music_amplifier
+.
+Proof.
+(* 
+   And here comes the proof.
+   - Show the actual definitions of device x with 'unfold x.'
+   - Apply 'tauto.' if there are only atomic propositions.
+
+   To ensure that the verifier will not complain because the tactic 'tauto'
+   is being used, we have a list of 15 unfolds. It should be more than enough.
+  
+   For the unfolds that you do not need you have to unfold an actual definition.
+   However, it is allowed to use a definition that you do not use in your installation.
+   As a dummy you can use for instance the motion sensor:
+   'unfold ms.'
+
+   You are not allowed to remove any lines because then the verifier thinks that you
+   changed the assignment, resulting in an orange flag (at most).
+*)
+
+unfold (*! term *)cdplayer.
+unfold (*! term *)amplifier.
+unfold (*! term *)powerstrip.
+unfold (*! term *)music_amplifier.
+unfold (*! term *)motionsensor.
+unfold (*! term *)motionsensor.
+unfold (*! term *)motionsensor.
+unfold (*! term *)motionsensor.
+unfold (*! term *)motionsensor.
+unfold (*! term *)motionsensor.
+unfold (*! term *)motionsensor.
+unfold (*! term *)motionsensor.
+unfold (*! term *)motionsensor.
+unfold (*! term *)motionsensor.
+unfold (*! term *)motionsensor.
+tauto.
+Qed.
+
+  
